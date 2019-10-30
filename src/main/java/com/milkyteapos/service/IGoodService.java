@@ -6,4 +6,5 @@ import com.milkyteapos.dataobject.Good;
 public interface IGoodService {
     ServerResponse findAllGood();
     ServerResponse addGood(Good good);
+    ServerResponse updateGood(int goodId, String type, String value);
 }

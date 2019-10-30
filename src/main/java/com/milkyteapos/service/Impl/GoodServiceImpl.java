@@ -6,14 +6,7 @@ import com.milkyteapos.repository.GoodRepository;
 import com.milkyteapos.service.IGoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service("iGoodService")
 public class GoodServiceImpl implements IGoodService {
@@ -35,5 +28,32 @@ public class GoodServiceImpl implements IGoodService {
         if (good1 != null)
             return ServerResponse.createByErrorMessage("已存在该商品");
         return ServerResponse.createBySuccess(goodRepository.save(good));
+    }
+
+    @Override
+    public ServerResponse updateGood(int goodId, String type, String value) {
+        Good good1 = goodRepository.findById(goodId);
+        if(type.equals("goodName")){
+            if (value == good1.getGoodName()){
+                return ServerResponse.createByErrorMessage("请修改为新的商品名称");
+            }
+            Good good2 = goodRepository.findByGoodName(value);
+            if(good2 != null){
+                return ServerResponse.createByErrorMessage("已存在相同商品名称");
+            }
+            good1.setGoodName(value);
+        }else if (type.equals("price")){
+            double price = Double.valueOf(value);
+            if (price == good1.getPrice()){
+                return ServerResponse.createByErrorMessage("请修改为新的商品价格");
+            }
+            good1.setPrice(price);
+        }else if (type.equals("classify")){
+            good1.setClassify(Integer.valueOf(value));
+        }else if (type.equals("avatar")){
+            good1.setPicture(value);
+        }
+        goodRepository.save(good1);
+        return ServerResponse.createBySuccess(good1);
     }
 }

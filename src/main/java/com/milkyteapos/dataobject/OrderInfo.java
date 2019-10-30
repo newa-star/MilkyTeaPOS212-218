@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Order {
+public class OrderInfo {
 
     @Id
     private int id;

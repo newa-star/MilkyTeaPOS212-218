@@ -5,12 +5,10 @@ import com.milkyteapos.common.ServerResponse;
 import com.milkyteapos.dataobject.Good;
 import com.milkyteapos.dataobject.User;
 import com.milkyteapos.service.IGoodService;
+import com.milkyteapos.service.IOrderService;
 import com.milkyteapos.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HelloController {
@@ -19,6 +17,8 @@ public class HelloController {
     private IUserService iUserService;
     @Autowired
     private IGoodService iGoodService;
+    @Autowired
+    private IOrderService iOrderService;
 
     @GetMapping(value = "/hello")
     public String Hello(){
@@ -48,5 +48,30 @@ public class HelloController {
     @GetMapping(value = "/findAllGood")
     public ServerResponse findAllGood(){
         return iGoodService.findAllGood();
+    }
+
+    @PostMapping(value = "/updateGood")
+    public ServerResponse updateGood(@RequestBody  JSONObject jsonObject){
+        int goodId = jsonObject.getIntValue("id");
+        String type = jsonObject.getString("type");
+        String value = jsonObject.getString("value");
+        return iGoodService.updateGood(goodId, type, value);
+    }
+
+    @GetMapping(value = "/findAllOrderInfo")
+    public ServerResponse findAllOrderInfo(){
+        return iOrderService.findAllOrderInfo();
+    }
+
+    @PostMapping(value = "/findOrderInfoByUserId")
+    public ServerResponse findOrderInfoByUserId(@RequestBody JSONObject jsonObject){
+        int userId = jsonObject.getIntValue("userId");
+        return iOrderService.findOrderInfoByUserId(userId);
+    }
+
+    @RequestMapping(value = "/orderDetail")
+    public ServerResponse orderDetail(@RequestBody JSONObject jsonObject){
+        int orderId = jsonObject.getIntValue("orderId");
+        return iOrderService.findOrderDetail(orderId);
     }
 }
