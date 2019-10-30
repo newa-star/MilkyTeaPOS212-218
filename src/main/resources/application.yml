@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: true
+  jackson:
+    default-property-inclusion: non_null
+#  设置采用哪种配置 dev--develop开发者配置
+  profiles:
+    active: dev
+#    设置上传最大缓冲区
+    servlet:
+      multipart:
+        max-request-size: 10MB
+        max-file-size: 10MB
