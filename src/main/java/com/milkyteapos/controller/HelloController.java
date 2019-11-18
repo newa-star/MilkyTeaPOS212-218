@@ -10,6 +10,8 @@ import com.milkyteapos.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 public class HelloController {
 
@@ -41,7 +43,7 @@ public class HelloController {
     }
 
     @PostMapping(value = "/addGood")
-    public ServerResponse addGood(@RequestBody Good good){
+    public ServerResponse addGood(@RequestBody Good good) throws Exception {
         return iGoodService.addGood(good);
     }
 
@@ -50,12 +52,21 @@ public class HelloController {
         return iGoodService.findAllGood();
     }
 
+    @PostMapping(value = "/findGoodByClassify")
+    public ServerResponse findGoodByClassify(@RequestBody JSONObject jsonObject){
+        int classify = jsonObject.getIntValue("classify");
+        return iGoodService.findByClassify(classify);
+    }
+
     @PostMapping(value = "/updateGood")
-    public ServerResponse updateGood(@RequestBody  JSONObject jsonObject){
+    public ServerResponse updateGood(@RequestBody Good good) throws IOException {
+        return iGoodService.updateGood(good);
+    }
+
+    @PostMapping(value = "/deleteGood")
+    public ServerResponse deleteGood(@RequestBody JSONObject jsonObject) throws IOException {
         int goodId = jsonObject.getIntValue("id");
-        String type = jsonObject.getString("type");
-        String value = jsonObject.getString("value");
-        return iGoodService.updateGood(goodId, type, value);
+        return iGoodService.deleteGood(goodId);
     }
 
     @GetMapping(value = "/findAllOrderInfo")
