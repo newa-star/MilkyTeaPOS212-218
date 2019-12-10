@@ -9,6 +9,7 @@ import com.milkyteapos.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service("iOrderService")
@@ -16,9 +17,6 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     OrderInfoRepository orderInfoRepository;
-
-    @Autowired
-    OrderGoodRepository orderGoodRepository;
 
     @Override
     public ServerResponse findAllOrderInfo() {
@@ -39,8 +37,13 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public ServerResponse findOrderDetail(int orderId) {
-        List<OrderGood> orderGoodList = orderGoodRepository.findByOrderId(orderId);
-        return ServerResponse.createBySuccess(orderGoodList);
+    public ServerResponse addOrder(int userId, Timestamp currentTime, double totalPrice) {
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setUserId(userId);
+        orderInfo.setCreateTime(currentTime);
+        orderInfo.setTotalPrice(totalPrice);
+        orderInfoRepository.save(orderInfo);
+        orderInfo = orderInfoRepository.findByCreateTime(currentTime);
+        return ServerResponse.createBySuccess(orderInfo);
     }
 }

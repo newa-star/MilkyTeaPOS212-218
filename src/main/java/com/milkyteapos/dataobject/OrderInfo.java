@@ -3,6 +3,7 @@ package com.milkyteapos.dataobject;
 import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -12,5 +13,6 @@ public class OrderInfo {
     private int id;
     private int userId;
     private int state;
-    private double total_price;
+    private double totalPrice;
+    private Timestamp createTime;
 }

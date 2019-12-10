@@ -1,16 +1,22 @@
 package com.milkyteapos.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.milkyteapos.common.ServerResponse;
 import com.milkyteapos.dataobject.Good;
+import com.milkyteapos.dataobject.OrderGood;
+import com.milkyteapos.dataobject.OrderInfo;
 import com.milkyteapos.dataobject.User;
 import com.milkyteapos.service.IGoodService;
+import com.milkyteapos.service.IOrderGoodService;
 import com.milkyteapos.service.IOrderService;
 import com.milkyteapos.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 public class HelloController {
@@ -21,6 +27,8 @@ public class HelloController {
     private IGoodService iGoodService;
     @Autowired
     private IOrderService iOrderService;
+    @Autowired
+    private IOrderGoodService iOrderGoodService;
 
     @GetMapping(value = "/hello")
     public String Hello(){
@@ -33,13 +41,23 @@ public class HelloController {
     }
 
     @PostMapping(value = "/login")
-    public ServerResponse login(@RequestBody JSONObject jsonObject){
-        String userName = jsonObject.getString("username");
-        String password = jsonObject.getString("password");
-        User user = new User();
-        user.setUserName(userName);
-        user.setPassword(password);
+    public ServerResponse login(@RequestBody User user){
         return iUserService.login(user);
+    }
+
+    @PostMapping(value = "/checkPassword")
+    public ServerResponse checkPassword(@RequestBody JSONObject jsonObject){
+        String code = jsonObject.getString("code");
+        String oldPassword = jsonObject.getString("oldPassword");
+        return iUserService.checkPassword(code, oldPassword);
+    }
+
+    @PostMapping(value = "/updatePassword")
+    public ServerResponse updatePassword(@RequestBody JSONObject jsonObject){
+        String code = jsonObject.getString("code");
+        String oldPassword = jsonObject.getString("oldPassword");
+        String newPassword = jsonObject.getString("newPassword");
+        return iUserService.updatePassword(code, newPassword);
     }
 
     @PostMapping(value = "/addGood")
@@ -58,6 +76,12 @@ public class HelloController {
         return iGoodService.findByClassify(classify);
     }
 
+    @PostMapping(value = "/findGoodByKey")
+    public ServerResponse findGoodByKey(@RequestBody JSONObject jsonObject){
+        String key = jsonObject.getString("key");
+        return iGoodService.findByKey(key);
+    }
+
     @PostMapping(value = "/updateGood")
     public ServerResponse updateGood(@RequestBody Good good) throws IOException {
         return iGoodService.updateGood(good);
@@ -67,6 +91,20 @@ public class HelloController {
     public ServerResponse deleteGood(@RequestBody JSONObject jsonObject) throws IOException {
         int goodId = jsonObject.getIntValue("id");
         return iGoodService.deleteGood(goodId);
+    }
+
+    @PostMapping(value = "/addOrderAndOrderGood")
+    public ServerResponse addOrderAndOrderGood(@RequestBody JSONObject jsonObject){
+        int userId = jsonObject.getIntValue("userId");
+        double totalPrice = jsonObject.getDouble("totalPrice");
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        ServerResponse serverResponse = iOrderService.addOrder(userId, currentTime, totalPrice);
+        JSONArray jsonArray = jsonObject.getJSONArray("orderGood");
+        List<OrderGood> orderGoodList = (List<OrderGood>) JSONObject.parseArray(jsonArray.toJSONString(), OrderGood.class);
+        OrderInfo orderInfo = (OrderInfo) serverResponse.getData();
+        int orderId = orderInfo.getId();
+        iOrderGoodService.addOrderGood(orderId, orderGoodList);
+        return ServerResponse.createBySuccessMessage("订单添加成功");
     }
 
     @GetMapping(value = "/findAllOrderInfo")
@@ -83,6 +121,6 @@ public class HelloController {
     @RequestMapping(value = "/orderDetail")
     public ServerResponse orderDetail(@RequestBody JSONObject jsonObject){
         int orderId = jsonObject.getIntValue("orderId");
-        return iOrderService.findOrderDetail(orderId);
+        return iOrderGoodService.findOrderDetail(orderId);
     }
 }

@@ -9,6 +9,7 @@ public interface GoodRepository extends JpaRepository<Good, Integer> {
     List<Good> findAll();
     Good findById(int goodId);
     Good findByGoodName(String goodName);
+    List<Good> findByGoodNameContains(String key);
     Good findByGoodNameAndSize(String goodName, int size);
     List<Good> findByClassify(int classify);
     Good deleteById(int goodId);

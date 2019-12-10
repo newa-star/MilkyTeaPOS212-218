@@ -9,6 +9,7 @@ public interface IGoodService {
     ServerResponse addGood (Good good) throws Exception;
     ServerResponse findAllGood();
     ServerResponse findByClassify(int classify);
+    ServerResponse findByKey(String key);
     ServerResponse updateGood(Good good) throws IOException;
     ServerResponse deleteGood(int goodId);
 }

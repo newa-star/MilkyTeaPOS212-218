@@ -5,6 +5,7 @@ import com.milkyteapos.dataobject.Good;
 import com.milkyteapos.repository.GoodRepository;
 import com.milkyteapos.service.IGoodService;
 import com.milkyteapos.utils.PropertiesUtil;
+import jnr.ffi.annotations.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,22 @@ public class GoodServiceImpl implements IGoodService {
         List<Good> goodList = goodRepository.findByClassify(classify);
         if (goodList.size() == 0){
             return ServerResponse.createByErrorMessage("无商品信息");
+        }
+        return ServerResponse.createBySuccess(goodList);
+    }
+
+    @Override
+    public ServerResponse findByKey(String key) {
+        List<Good> goodList = goodRepository.findByGoodNameContains(key);
+        boolean flag = true;
+        for (int i = 0; i < key.length(); i++)
+        {
+            if (!Character.isDigit(key.charAt(i)))
+                flag = false;
+        }
+        if(flag){
+            Good good1 = goodRepository.findById((int)Integer.valueOf(key));
+            goodList.add(0, good1);
         }
         return ServerResponse.createBySuccess(goodList);
     }
