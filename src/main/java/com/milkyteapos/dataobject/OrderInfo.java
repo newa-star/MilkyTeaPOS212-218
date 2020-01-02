@@ -15,4 +15,12 @@ public class OrderInfo {
     private int state;
     private double totalPrice;
     private Timestamp createTime;
+
+    public void setId(int i){
+        this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
+    }
 }
