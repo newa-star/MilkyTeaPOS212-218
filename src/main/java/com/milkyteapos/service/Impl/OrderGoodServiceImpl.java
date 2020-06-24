@@ -5,7 +5,6 @@ import com.milkyteapos.dataobject.OrderGood;
 import com.milkyteapos.repository.GoodRepository;
 import com.milkyteapos.repository.OrderGoodRepository;
 import com.milkyteapos.service.IOrderGoodService;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

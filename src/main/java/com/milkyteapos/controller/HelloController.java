@@ -7,10 +7,7 @@ import com.milkyteapos.dataobject.Good;
 import com.milkyteapos.dataobject.OrderGood;
 import com.milkyteapos.dataobject.OrderInfo;
 import com.milkyteapos.dataobject.User;
-import com.milkyteapos.service.IGoodService;
-import com.milkyteapos.service.IOrderGoodService;
-import com.milkyteapos.service.IOrderService;
-import com.milkyteapos.service.IUserService;
+import com.milkyteapos.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +26,8 @@ public class HelloController {
     private IOrderService iOrderService;
     @Autowired
     private IOrderGoodService iOrderGoodService;
+    @Autowired
+    private IFormService iFormService;
 
     @GetMapping(value = "/hello")
     public String Hello(){
@@ -38,6 +37,13 @@ public class HelloController {
     @PostMapping(value = "/apply")
     public ServerResponse apply(@RequestBody User user){
         return iUserService.applyAccount(user);
+    }
+
+    @PostMapping(value = "/review")
+    public ServerResponse review(@RequestBody JSONObject jsonObject){
+        String code = jsonObject.getString("code");
+        int result = jsonObject.getIntValue("result");
+        return iUserService.reviewAdmin(code, result);
     }
 
     @PostMapping(value = "/login")
@@ -55,7 +61,6 @@ public class HelloController {
     @PostMapping(value = "/updatePassword")
     public ServerResponse updatePassword(@RequestBody JSONObject jsonObject){
         String code = jsonObject.getString("code");
-        String oldPassword = jsonObject.getString("oldPassword");
         String newPassword = jsonObject.getString("newPassword");
         return iUserService.updatePassword(code, newPassword);
     }
@@ -122,5 +127,22 @@ public class HelloController {
     public ServerResponse orderDetail(@RequestBody JSONObject jsonObject){
         int orderId = jsonObject.getIntValue("orderId");
         return iOrderGoodService.findOrderDetail(orderId);
+    }
+
+    @RequestMapping(value = "/lineChart")
+    public ServerResponse lineChart(@RequestBody JSONObject jsonObject){
+        String createYearStr = jsonObject.getString("createYear");
+        return iFormService.lineChart(createYearStr);
+    }
+
+    @RequestMapping(value = "/barChart")
+    public ServerResponse barChart(@RequestBody JSONObject jsonObject){
+        String createYearStr = jsonObject.getString("createYear");
+        return iFormService.barChart(createYearStr);
+    }
+    @RequestMapping(value = "/pieChart")
+    public ServerResponse pieChart(@RequestBody JSONObject jsonObject){
+        String createYearStr = jsonObject.getString("createYear");
+        return iFormService.pieChart(createYearStr);
     }
 }

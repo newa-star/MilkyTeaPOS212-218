@@ -9,5 +9,6 @@ public interface OrderInfoRepository extends JpaRepository<OrderInfo, Integer> {
     List<OrderInfo> findAll();
     List<OrderInfo> findByUserId(int userId);
     OrderInfo findByCreateTime(Timestamp createTime);
+    List<OrderInfo> findByCreateTimeBetween(Timestamp createTime, Timestamp afterCreateTime);
     OrderInfo save(OrderInfo orderInfo);
 }
